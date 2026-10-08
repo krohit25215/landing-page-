@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TechNova - Landing Page</title>
+
+    <style>
+        /* ---------- RESET ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            background-color: #f8fafc;
+        }
+
+        /* ---------- NAVBAR ---------- */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #0f172a;
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: #38bdf8;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #38bdf8;
+        }
+
+        /* ---------- HERO ---------- */
+        .hero {
+            min-height: 90vh;
+            padding: 80px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+        }
+
+        .hero-content {
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #dbeafe;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 28px;
+            background-color: #38bdf8;
+            color: #0f172a;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: white;
+            transform: translateY(-2px);
+        }
+
+        /* ---------- COMMON SECTION ---------- */
+        section {
+            padding: 70px 6%;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            color: #0f172a;
+            margin-bottom: 40px;
+        }
+
+        /* ---------- FEATURES ---------- */
+        .features {
+            background-color: white;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .feature-card {
+            padding: 30px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            color: #1e3a8a;
+        }
+
+        .feature-card p {
+            font-size: 16px;
+            color: #475569;
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        /* ---------- ABOUT ---------- */
+        .about {
+            background-color: #e0f2fe;
+        }
+
+        .about-container {
+            max-width: 1000px;
+            margin: auto;
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h2 {
+            font-size: 36px;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .about-text p {
+            font-size: 17px;
+            color: #334155;
+            margin-bottom: 15px;
+        }
+
+        .about-box {
+            flex: 1;
+            background-color: #0f172a;
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .about-box h3 {
+            color: #38bdf8;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        /* ---------- TESTIMONIAL ---------- */
+        .testimonial {
+            background-color: white;
+            text-align: center;
+        }
+
+        .testimonial-box {
+            max-width: 750px;
+            margin: auto;
+            padding: 35px;
+            background-color: #f1f5f9;
+            border-radius: 12px;
+        }
+
+        .testimonial-box p {
+            font-size: 18px;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-box h4 {
+            color: #1e3a8a;
+            font-size: 17px;
+        }
+
+        /* ---------- FOOTER ---------- */
+        footer {
+            background-color: #0f172a;
+            color: white;
+            padding: 40px 6%;
+            text-align: center;
+        }
+
+        footer h3 {
+            color: #38bdf8;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        footer p {
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .social-links a {
+            color: #38bdf8;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: white;
+        }
+
+        /* ---------- RESPONSIVE DESIGN ---------- */
+        @media (max-width: 768px) {
+
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                min-height: 80vh;
+                padding: 60px 5%;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .hero p {
+                font-size: 17px;
+            }
+
+            .section-title {
+                font-size: 30px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .about-container {
+                flex-direction: column;
+            }
+
+            .about-text h2 {
+                font-size: 30px;
+            }
+
+            section {
+                padding: 55px 5%;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 12px 22px;
+            }
+
+            .feature-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION BAR -->
+    <nav class="navbar">
+        <div class="logo">TechNova</div>
+
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Build Your Digital Future</h1>
+
+            <p>
+                Modern, simple and powerful digital solutions
+                designed to help your ideas grow.
+            </p>
+
+            <a href="#features" class="btn">Explore Features</a>
+        </div>
+    </section>
+
+
+    <!-- FEATURES SECTION -->
+    <section class="features" id="features">
+
+        <h2 class="section-title">Our Features</h2>
+
+        <div class="feature-grid">
+
+            <div class="feature-card">
+                <div class="icon">⚡</div>
+                <h3>Fast Performance</h3>
+                <p>
+                    Our solutions are optimized for speed,
+                    performance and better user experience.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🔒</div>
+                <h3>Secure Platform</h3>
+                <p>
+                    We focus on creating safe and reliable
+                    digital experiences for everyone.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">📱</div>
+                <h3>Responsive Design</h3>
+                <p>
+                    Our websites work smoothly on mobile,
+                    tablet and desktop devices.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ABOUT SECTION -->
+    <section class="about" id="about">
+
+        <div class="about-container">
+
+            <div class="about-text">
+                <h2>About TechNova</h2>
+
+                <p>
+                    TechNova is a modern digital platform created
+                    to provide simple and effective technology
+                    solutions.
+                </p>
+
+                <p>
+                    We believe that technology should be easy to use,
+                    attractive and accessible on every device.
+                </p>
+            </div>
+
+            <div class="about-box">
+                <h3>100% Digital</h3>
+                <p>
+                    Simple design, modern technology and
+                    better user experience.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- TESTIMONIAL SECTION -->
+    <section class="testimonial">
+
+        <h2 class="section-title">What People Say</h2>
+
+        <div class="testimonial-box">
+            <p>
+                "TechNova made our online experience simple,
+                fast and professional."
+            </p>
+
+            <h4>— Rahul Sharma</h4>
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <footer id="contact">
+
+        <h3>TechNova</h3>
+
+        <p>Have questions? Contact us through our social platforms.</p>
+
+        <div class="social-links">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">LinkedIn</a>
+            <a href="#">Email</a>
+        </div>
+
+        <p>© 2026 TechNova. All Rights Reserved.</p>
+
+    </footer>
+
+</body>
+</html>
