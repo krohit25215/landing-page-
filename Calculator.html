@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Calculator</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #e6e6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            width: 320px;
+            background: #222;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        h2 {
+            color: white;
+            text-align: center;
+        }
+
+        #display {
+            width: 100%;
+            height: 55px;
+            margin-bottom: 10px;
+            font-size: 25px;
+            text-align: right;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: white;
+        }
+
+        #error {
+            color: #ff7777;
+            text-align: center;
+            min-height: 20px;
+            font-size: 13px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        button {
+            height: 55px;
+            font-size: 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            background: #444;
+            color: white;
+        }
+
+        button:hover {
+            filter: brightness(1.3);
+        }
+
+        .operator {
+            background: orange;
+            color: black;
+        }
+
+        .clear {
+            background: #e74c3c;
+        }
+
+        .equal {
+            background: #2ecc71;
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="calculator">
+        <h2>Calculator</h2>
+
+        <input type="text" id="display" value="0" readonly>
+
+        <p id="error" role="alert"></p>
+
+        <div class="buttons">
+            <button class="clear" data-action="clear">C</button>
+            <button data-action="delete">DEL</button>
+            <button class="operator" data-operator="/">÷</button>
+            <button class="operator" data-operator="*">×</button>
+
+            <button data-number="7">7</button>
+            <button data-number="8">8</button>
+            <button data-number="9">9</button>
+            <button class="operator" data-operator="-">−</button>
+
+            <button data-number="4">4</button>
+            <button data-number="5">5</button>
+            <button data-number="6">6</button>
+            <button class="operator" data-operator="+">+</button>
+
+            <button data-number="1">1</button>
+            <button data-number="2">2</button>
+            <button data-number="3">3</button>
+            <button class="equal" data-action="equals">=</button>
+
+            <button data-number="0">0</button>
+            <button data-number=".">.</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.getElementById("display");
+        const error = document.getElementById("error");
+        const buttons = document.querySelector(".buttons");
+
+        let firstNumber = null;
+        let operator = null;
+        let waitingForNumber = false;
+        let justCalculated = false;
+
+        function clearAll() {
+            display.value = "0";
+            firstNumber = null;
+            operator = null;
+            waitingForNumber = false;
+            justCalculated = false;
+            error.textContent = "";
+        }
+
+        function enterNumber(number) {
+            error.textContent = "";
+
+            if (justCalculated) {
+                display.value = "0";
+                firstNumber = null;
+                operator = null;
+                justCalculated = false;
+            }
+
+            if (waitingForNumber) {
+                display.value = number === "." ? "0." : number;
+                waitingForNumber = false;
+                return;
+            }
+
+            if (number === ".") {
+                if (!display.value.includes(".")) {
+                    display.value += ".";
+                }
+            } else {
+                display.value =
+                    display.value === "0"
+                    ? number
+                    : display.value + number;
+            }
+        }
+
+        function calculate(a, b, op) {
+            switch (op) {
+                case "+":
+                    return a + b;
+                case "-":
+                    return a - b;
+                case "*":
+                    return a * b;
+                case "/":
+                    if (b === 0) {
+                        throw new Error("Cannot divide by zero!");
+                    }
+                    return a / b;
+                default:
+                    return b;
+            }
+        }
+
+        function chooseOperator(nextOperator) {
+            error.textContent = "";
+
+            const currentNumber = Number(display.value);
+
+            if (operator !== null && !waitingForNumber) {
+                try {
+                    const result = calculate(
+                        firstNumber,
+                        currentNumber,
+                        operator
+                    );
+
+                    if (!Number.isFinite(result)) {
+                        throw new Error("Invalid calculation!");
+                    }
+
+                    display.value = String(Number(result.toPrecision(12)));
+                    firstNumber = Number(display.value);
+                } catch (e) {
+                    error.textContent = e.message;
+                    return;
+                }
+            } else if (firstNumber === null || justCalculated) {
+                firstNumber = currentNumber;
+            }
+
+            operator = nextOperator;
+            waitingForNumber = true;
+            justCalculated = false;
+        }
+
+        function showResult() {
+            if (operator === null || waitingForNumber) {
+                return;
+            }
+
+            const secondNumber = Number(display.value);
+
+            try {
+                const result = calculate(
+                    firstNumber,
+                    secondNumber,
+                    operator
+                );
+
+                if (!Number.isFinite(result)) {
+                    throw new Error("Invalid calculation!");
+                }
+
+                display.value = String(Number(result.toPrecision(12)));
+
+                firstNumber = null;
+                operator = null;
+                waitingForNumber = true;
+                justCalculated = true;
+                error.textContent = "";
+            } catch (e) {
+                error.textContent = e.message;
+            }
+        }
+
+        function deleteLast() {
+            error.textContent = "";
+
+            if (justCalculated) {
+                clearAll();
+                return;
+            }
+
+            if (waitingForNumber) {
+                return;
+            }
+
+            display.value = display.value.length > 1
+                ? display.value.slice(0, -1)
+                : "0";
+        }
+
+        buttons.addEventListener("click", function(event) {
+            const button = event.target.closest("button");
+
+            if (!button) return;
+
+            if (button.dataset.number !== undefined) {
+                enterNumber(button.dataset.number);
+            } else if (button.dataset.operator) {
+                chooseOperator(button.dataset.operator);
+            } else if (button.dataset.action === "clear") {
+                clearAll();
+            } else if (button.dataset.action === "delete") {
+                deleteLast();
+            } else if (button.dataset.action === "equals") {
+                showResult();
+            }
+        });
+    </script>
+
+</body>
+</html>
+
