@@ -1,0 +1,366 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Registration System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #667eea;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #5366d5;
+}
+
+p {
+    text-align: center;
+}
+
+a {
+    color: #667eea;
+    cursor: pointer;
+}
+
+.message {
+    color: red;
+    font-size: 14px;
+}
+
+.success {
+    color: green;
+}
+
+#dashboard {
+    text-align: center;
+}
+
+#dashboard button {
+    background: #e74c3c;
+}
+
+.hidden {
+    display: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Registration Page -->
+    <div id="registerPage">
+        <h2>Create Account</h2>
+
+        <form id="registerForm">
+
+            <input type="text" id="regUsername"
+            placeholder="Enter Username" required>
+
+            <input type="email" id="regEmail"
+            placeholder="Enter Email" required>
+
+            <input type="password" id="regPassword"
+            placeholder="Enter Password" required>
+
+            <button type="submit">Register</button>
+
+        </form>
+
+        <p id="regMessage" class="message"></p>
+
+        <p>Already have an account?
+        <a onclick="showLogin()">Login</a></p>
+    </div>
+
+
+    <!-- Login Page -->
+    <div id="loginPage" class="hidden">
+
+        <h2>User Login</h2>
+
+        <form id="loginForm">
+
+            <input type="text" id="loginIdentity"
+            placeholder="Username or Email" required>
+
+            <input type="password" id="loginPassword"
+            placeholder="Enter Password" required>
+
+            <button type="submit">Login</button>
+
+        </form>
+
+        <p id="loginMessage" class="message"></p>
+
+        <p>Don't have an account?
+        <a onclick="showRegister()">Register</a></p>
+
+    </div>
+
+
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="hidden">
+
+        <h2>Welcome to Dashboard!</h2>
+
+        <h3 id="welcomeUser"></h3>
+
+        <p>You have successfully logged in.</p>
+
+        <button onclick="logout()">Logout</button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// SHA-256 Password Hashing
+async function hashPassword(password) {
+
+    const data = new TextEncoder().encode(password);
+
+    const hash = await crypto.subtle.digest("SHA-256", data);
+
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+}
+
+
+// Get Users
+function getUsers() {
+    return JSON.parse(localStorage.getItem("users") || "[]");
+}
+
+
+// Show Registration
+function showRegister() {
+
+    document.getElementById("registerPage").classList.remove("hidden");
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+
+}
+
+
+// Show Login
+function showLogin() {
+
+    document.getElementById("registerPage").classList.add("hidden");
+    document.getElementById("loginPage").classList.remove("hidden");
+    document.getElementById("dashboard").classList.add("hidden");
+
+}
+
+
+// Show Dashboard
+function showDashboard(username) {
+
+    document.getElementById("registerPage").classList.add("hidden");
+    document.getElementById("loginPage").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+
+    document.getElementById("welcomeUser").textContent =
+        "Hello, " + username;
+
+}
+
+
+// Registration
+document.getElementById("registerForm")
+.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const username = document.getElementById("regUsername").value.trim();
+    const email = document.getElementById("regEmail").value.trim().toLowerCase();
+    const password = document.getElementById("regPassword").value;
+
+    const message = document.getElementById("regMessage");
+
+    if (!username || !email || !password) {
+        message.textContent = "Please fill all fields!";
+        return;
+    }
+
+    if (password.length < 8 || !/[0-9]/.test(password)) {
+        message.textContent =
+        "Password must be 8 characters and contain at least 1 number!";
+        return;
+    }
+
+    const users = getUsers();
+
+    const exists = users.some(user =>
+        user.username.toLowerCase() === username.toLowerCase() ||
+        user.email === email
+    );
+
+    if (exists) {
+        message.textContent = "Username or Email already exists!";
+        return;
+    }
+
+    try {
+
+        const passwordHash = await hashPassword(password);
+
+        users.push({
+            username: username,
+            email: email,
+            passwordHash: passwordHash
+        });
+
+        localStorage.setItem("users", JSON.stringify(users));
+
+        message.className = "success";
+        message.textContent = "Registration Successful!";
+
+        document.getElementById("registerForm").reset();
+
+        setTimeout(showLogin, 1000);
+
+    } catch (error) {
+        message.textContent = "Registration failed!";
+    }
+
+});
+
+
+// Login
+document.getElementById("loginForm")
+.addEventListener("submit", async function(e) {
+
+    e.preventDefault();
+
+    const identity = document.getElementById("loginIdentity")
+    .value.trim();
+
+    const password = document.getElementById("loginPassword").value;
+
+    const message = document.getElementById("loginMessage");
+
+    if (!identity || !password) {
+        message.textContent = "Please fill all fields!";
+        return;
+    }
+
+    try {
+
+        const users = getUsers();
+
+        const user = users.find(u =>
+            u.username.toLowerCase() === identity.toLowerCase() ||
+            u.email === identity.toLowerCase()
+        );
+
+        const passwordHash = await hashPassword(password);
+
+        if (!user || user.passwordHash !== passwordHash) {
+
+            message.textContent =
+            "Invalid Username/Email or Password!";
+
+            return;
+        }
+
+        sessionStorage.setItem("loggedIn", "true");
+        sessionStorage.setItem("currentUser", user.username);
+
+        document.getElementById("loginForm").reset();
+
+        showDashboard(user.username);
+
+    } catch (error) {
+        message.textContent = "Login failed!";
+    }
+
+});
+
+
+// Logout
+function logout() {
+
+    sessionStorage.removeItem("loggedIn");
+    sessionStorage.removeItem("currentUser");
+
+    document.getElementById("loginForm").reset();
+
+    showLogin();
+
+}
+
+
+// Check Existing Session
+window.onload = function() {
+
+    if (sessionStorage.getItem("loggedIn") === "true") {
+
+        showDashboard(
+            sessionStorage.getItem("currentUser")
+        );
+
+    } else {
+
+        showRegister();
+
+    }
+
+};
+
+</script>
+
+</body>
+</html>
+```
